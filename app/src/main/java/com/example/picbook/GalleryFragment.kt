@@ -39,7 +39,6 @@ class GalleryFragment : Fragment() {
 
     private lateinit var galleryAdapter: GalleryAdapter
     private lateinit var gallery: RecyclerView
-    private lateinit var itemView: View
     private lateinit var emptyView: View
     private lateinit var headerText: TextView
     private lateinit var selectAll: CheckBox
@@ -66,11 +65,17 @@ class GalleryFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_gallery, container, false)
 
+        /**
+         * First of all check permission
+         */
+        if(!haveStoragePermission()){
+            requestPermission()
+        }
+
         gallery= view.findViewById(R.id.gallery)
         emptyView = view.findViewById(R.id.empty_view)
         headerText = view.findViewById(R.id.textView)
         selectAll = view.findViewById(R.id.selectAll)
-        itemView = gallery.rootView
 
         addFab = view.findViewById(R.id.addFab)
         editFab = view.findViewById(R.id.editFab)
@@ -103,7 +108,9 @@ class GalleryFragment : Fragment() {
             if(haveStoragePermission()){
                 openGallery()
             }else{
-                requestPermission()
+                Toast
+                    .makeText(requireContext(), "Check Settings for change permissions.", Toast.LENGTH_LONG)
+                    .show()
             }
         }
 
@@ -278,24 +285,11 @@ class GalleryFragment : Fragment() {
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-        when(requestCode){
-            READ_EXTERNAL_STORAGE_REQUEST ->{
-                if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    openGallery()
-                } else {
-
-                    val showRationale =
-                        ActivityCompat.shouldShowRequestPermissionRationale(
-                            requireActivity(),
-                            Manifest.permission.READ_EXTERNAL_STORAGE
-                        )
-                    if (!showRationale) {
-                        Toast
-                            .makeText(requireContext(), "Open Settings to change permissions.", Toast.LENGTH_LONG)
-                            .show()
-
-                    }
-                }
+        if(requestCode == READ_EXTERNAL_STORAGE_REQUEST){
+            if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                Log.i("GalleryFragment","External Storage permission granted.")
+            }else{
+                Log.i("GalleryFragment","External Storage permission NOT granted.")
             }
         }
     }

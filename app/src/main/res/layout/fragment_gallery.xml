@@ -34,7 +34,7 @@
         android:textSize="18sp"
         android:textStyle="bold"
         android:visibility="invisible"
-        app:buttonTint="@color/blue"
+        app:buttonTint="@color/light_gray"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

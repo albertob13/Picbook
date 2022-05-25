@@ -9,6 +9,7 @@
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.1785" />
         <entry key="app/src/main/res/drawable/ic_photo_album_black_24dp.xml" value="0.1785" />
         <entry key="app/src/main/res/drawable/line_divider.xml" value="0.104" />
+        <entry key="app/src/main/res/drawable/selection_padding.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/selection_rect.xml" value="0.104" />
         <entry key="app/src/main/res/drawable/selection_style.xml" value="0.1785" />
         <entry key="app/src/main/res/drawable/selection_tick.xml" value="0.1" />
