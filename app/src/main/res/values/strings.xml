@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Picbook</string>
+
+    <string name="headerDesc">headerDesc</string>
+    <string name="headerText">All photos</string>
+    <string name="checkBoxSelectAll">Select all</string>
+
+    <string name="addFab">addFab</string>
+    <string name="editFab">editFab</string>
+    <string name="cancelFab">cancelFab</string>
+    <string name="deleteFab">deleteFab</string>
+
+    <string name="welcomeText">No image available</string>
+    <string name="placeholder">PlaceholderText</string>
+
+    <string name="selectImage">Select image to start</string>
+
+    <string name="detailDeleteBut">Delete image</string>
+    <string name="imageName"> Image name</string>
+    <string name="detailImage"> Detail image</string>
+
+    <string name="delAlert"> Delete</string>
+    <string name="cancAlert">Cancel</string>
+
+    <string name="menuDelete">Delete</string>
+</resources>
