@@ -14,10 +14,10 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "image")
 data class MSImage(
     @ColumnInfo(name = "displayName") val displayName: String,
-    @ColumnInfo(name = "path") val path: String
+    @ColumnInfo(name = "path") val path: String,
+    @ColumnInfo(name = "thumb-path") val thumbPath: String
     ){
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") var id: Int = 0
-    @Ignore var bitmap: Bitmap? = BitmapFactory.decodeFile(path)
     @Ignore var selected: Boolean = false
 }
 

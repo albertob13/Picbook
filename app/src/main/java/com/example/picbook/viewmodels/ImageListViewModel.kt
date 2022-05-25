@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.ContextWrapper
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.graphics.ImageDecoder.decodeBitmap
 import android.net.Uri
@@ -14,9 +15,11 @@ import android.provider.MediaStore
 import android.util.Log
 import androidx.lifecycle.*
 import com.example.picbook.data.AppDatabase
+import com.example.picbook.data.Converters
 import com.example.picbook.data.DataRepository
 import com.example.picbook.data.MSImage
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 import java.io.File
 
 
@@ -24,6 +27,8 @@ class ImageListViewModel(application: Application) : AndroidViewModel(applicatio
 
     private val imageDao = AppDatabase.getInstance(application).imageDao()
     private val dataRepository = DataRepository(imageDao)
+
+    private val context = getApplication<Application>().applicationContext
 
 
     val allImages: LiveData<List<MSImage>> = dataRepository.getImageList()
@@ -77,9 +82,11 @@ class ImageListViewModel(application: Application) : AndroidViewModel(applicatio
                 MediaStore.Images.Media.getBitmap(contentResolver, contentUri)
             }
 
-            val bitmapFile = createBitmapFile(getApplication<Application>().applicationContext, bitmap, displayName)
-            if(bitmapFile != null){
-                image = MSImage(displayName,bitmapFile.absolutePath)
+            val sampled = sampledBitmap(bitmap)
+            val bitmapFile = createBitmapFile(context, bitmap, displayName)
+            val sampledFile = createBitmapFile(context, sampled, "sampled_$displayName")
+            if(bitmapFile != null && sampledFile != null){
+                image = MSImage(displayName,bitmapFile.absolutePath, sampledFile.absolutePath)
             }
             Log.i(TAG, "Added image: ($displayName, $contentUri)")
         }
@@ -132,6 +139,13 @@ class ImageListViewModel(application: Application) : AndroidViewModel(applicatio
         }
 
     }
+
+    private fun sampledBitmap(bitmap: Bitmap): Bitmap?{
+        val stream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream)
+        return Converters().decodeSampledBitmap(stream.toByteArray(), 200, 200)
+    }
+
 }
 
 class ImageListViewModelFactory(private val application: Application) : ViewModelProvider.Factory {

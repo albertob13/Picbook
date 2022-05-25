@@ -1,6 +1,7 @@
 package com.example.picbook
 
 import android.app.AlertDialog
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.*
 import android.widget.TextView
@@ -39,7 +40,7 @@ class DetailFragment : Fragment() {
                 imageName.visibility = View.VISIBLE
                 imageName.text = it.displayName
                 imageView.resetPresentScale()   //set presentScale default value
-                imageView.setImageBitmap(it.bitmap)
+                imageView.setImageBitmap(BitmapFactory.decodeFile(it.path))
             }else{
                 //Tablet shows a placeholder when no image is selected (after delete)
                 imageView.setImageResource(R.drawable.placeholder)

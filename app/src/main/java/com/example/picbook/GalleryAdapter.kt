@@ -2,6 +2,7 @@ package com.example.picbook
 
 
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.graphics.Rect
 import android.util.Log
 import android.util.TypedValue
@@ -47,7 +48,7 @@ class GalleryAdapter(private val gallery: RecyclerView, private val onClick: (MS
 
         fun bind(image: MSImage){
             currentImage = image
-            imageView.setImageBitmap(image.bitmap)
+            imageView.setImageBitmap(BitmapFactory.decodeFile(currentImage.thumbPath))
         }
     }
 
