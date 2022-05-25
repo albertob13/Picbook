@@ -1,21 +1,16 @@
 package com.example.picbook
 
 
-import android.content.Context
 import android.graphics.BitmapFactory
 import android.graphics.Rect
-import android.util.Log
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.core.view.setPadding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.picbook.data.MSImage
-import kotlin.math.round
 
 
 class GalleryAdapter(private val gallery: RecyclerView, private val onClick: (MSImage) -> Unit):

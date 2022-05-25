@@ -13,6 +13,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
+import androidx.core.net.toUri
 import androidx.lifecycle.*
 import com.example.picbook.data.*
 import kotlinx.coroutines.launch
@@ -128,6 +129,7 @@ class ImageListViewModel(application: Application) : AndroidViewModel(applicatio
             bitmap?.compress(Bitmap.CompressFormat.JPEG, 50, stream)
             stream.flush()  //complete all stream processing
             stream.close()  //close the stream
+            Log.v("File", "Dir: $dir, File Name: $fileName")
             file
         }catch (e: Exception){
             e.printStackTrace()
