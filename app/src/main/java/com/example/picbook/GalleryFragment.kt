@@ -5,6 +5,8 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
+import android.media.VolumeShaper
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -72,6 +74,11 @@ class GalleryFragment : Fragment() {
             requestPermission()
         }
 
+        /**
+         * detailsFrag will be null if target device is a smartphone
+         */
+        detailsFrag = requireActivity().supportFragmentManager.findFragmentById(R.id.details_frag_large)
+
         gallery= view.findViewById(R.id.gallery)
         emptyView = view.findViewById(R.id.empty_view)
         headerText = view.findViewById(R.id.textView)
@@ -86,7 +93,12 @@ class GalleryFragment : Fragment() {
         galleryAdapter = GalleryAdapter(gallery){image -> adapterOnClick(image)}
         gallery.let{ rv ->
             rv.adapter = galleryAdapter
-            rv.layoutManager = GridLayoutManager(requireContext(), 3)
+            if(detailsFrag != null && resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT){
+                rv.layoutManager = GridLayoutManager(requireContext(), 6)
+            }else {
+                rv.layoutManager = GridLayoutManager(requireContext(), 3)
+            }
+
             rv.addItemDecoration(GridItemDecorator())
         }
 
@@ -186,11 +198,6 @@ class GalleryFragment : Fragment() {
             }
 
         }
-
-        /**
-         * detailsFrag will be null if target device is a smartphone
-         */
-        detailsFrag = requireActivity().supportFragmentManager.findFragmentById(R.id.details_frag_large)
 
         return view
     }

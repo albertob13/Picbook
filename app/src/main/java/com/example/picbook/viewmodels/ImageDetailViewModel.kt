@@ -8,6 +8,8 @@ import kotlinx.coroutines.launch
 
 class ImageDetailViewModel(val dataRepository: DataRepository): ViewModel() {
 
+    val allImages: LiveData<List<MSImage>> = dataRepository.getImageList()
+
     /**
      * LiveData used for update the image displayed. When 'displayImage' is updated, Ui will be
      * automatically updated. Useful both for smartphone and tablet

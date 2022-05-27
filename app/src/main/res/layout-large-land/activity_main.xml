@@ -2,11 +2,21 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
+    android:id="@+id/frags"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/dark_gray"
-    android:id="@+id/frags">
+    android:background="@color/dark_gray">
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/gallery_frag_large"
+        android:name="com.example.picbook.GalleryFragment"
+        tools:layout="@layout/fragment_gallery"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/details_frag_large"
@@ -15,15 +25,5 @@
         android:layout_height="match_parent"
         android:layout_weight="0.5"
         tools:layout="@layout/fragment_detail" />
-
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/gallery_frag_large"
-        android:name="com.example.picbook.GalleryFragment"
-        tools:layout="@layout/fragment_gallery"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="10dp"
-        android:layout_weight="1" />
-
 
 </LinearLayout>

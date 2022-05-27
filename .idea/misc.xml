@@ -13,7 +13,9 @@
         <entry key="app/src/main/res/drawable/selection_rect.xml" value="0.104" />
         <entry key="app/src/main/res/drawable/selection_style.xml" value="0.1785" />
         <entry key="app/src/main/res/drawable/selection_tick.xml" value="0.1" />
-        <entry key="app/src/main/res/layout-large/activity_main.xml" value="0.1" />
+        <entry key="app/src/main/res/layout-land/activity_main.xml" value="0.16225749559082892" />
+        <entry key="app/src/main/res/layout-large-land/activity_main.xml" value="0.278954591968133" />
+        <entry key="app/src/main/res/layout-large/activity_main.xml" value="0.15382843017578127" />
         <entry key="app/src/main/res/layout-large/activity_main_large.xml" value="0.10121619219337004" />
         <entry key="app/src/main/res/layout-v23/gallery_item.xml" value="0.15942028985507245" />
         <entry key="app/src/main/res/layout/activity_detail.xml" value="0.1" />
