@@ -43,6 +43,7 @@ class GalleryAdapter(private val gallery: RecyclerView, private val onClick: (MS
 
         fun bind(image: MSImage){
             currentImage = image
+            itemView.isSelected = currentImage.selected
             imageView.setImageBitmap(BitmapFactory.decodeFile(currentImage.thumbPath))
         }
     }
@@ -56,6 +57,14 @@ class GalleryAdapter(private val gallery: RecyclerView, private val onClick: (MS
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         val mediaStoreImage = getItem(position)
         holder.bind(mediaStoreImage)
+
+    }
+
+    /**
+     * Method used for fix item style when scrolling
+     */
+    override fun getItemViewType(position: Int): Int {
+        return position
     }
 }
 

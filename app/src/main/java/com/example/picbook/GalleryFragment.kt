@@ -96,7 +96,7 @@ class GalleryFragment : Fragment() {
             if(detailsFrag != null && resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT){
                 rv.layoutManager = GridLayoutManager(requireContext(), 6)
             }else {
-                rv.layoutManager = GridLayoutManager(requireContext(), 3)
+                rv.layoutManager = GridLayoutManager(requireContext(), 4)
             }
 
             rv.addItemDecoration(GridItemDecorator())
@@ -187,7 +187,6 @@ class GalleryFragment : Fragment() {
                 }
                 if(allImages != null){
                     pendingImages.addAll(allImages)
-                    Log.v("selectAll", "${pendingImages.size}")
                 }
             }else{
                 imageListViewModel.selectStateAll(false)
