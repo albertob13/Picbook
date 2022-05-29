@@ -6,7 +6,6 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.media.VolumeShaper
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -43,19 +42,9 @@ class GalleryFragment : Fragment() {
     private lateinit var gallery: RecyclerView
     private lateinit var emptyView: View
     private lateinit var headerText: TextView
-    private lateinit var selectAll: CheckBox
+    private lateinit var imageCount: TextView
 
     private lateinit var addFab: FloatingActionButton
-    private lateinit var editFab: FloatingActionButton
-    private lateinit var cancelFab: FloatingActionButton
-    private lateinit var deleteFab: FloatingActionButton
-
-    private var editMode: Boolean = false
-
-    /**
-     * Save the selected images id, making them ready for deletion
-     */
-    private val pendingImages = mutableListOf<MSImage>()
 
     /**
      * Fragment for Tablet. Will be null if target device is a smartphone
@@ -68,34 +57,40 @@ class GalleryFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_gallery, container, false)
 
         /**
+         * detailsFrag will be null if target device is a smartphone
+         */
+        detailsFrag = requireActivity().supportFragmentManager.findFragmentById(R.id.details_frag_large)
+
+        /**
          * First of all check permission
          */
         if(!haveStoragePermission()){
             requestPermission()
         }
 
-        /**
-         * detailsFrag will be null if target device is a smartphone
-         */
-        detailsFrag = requireActivity().supportFragmentManager.findFragmentById(R.id.details_frag_large)
-
         gallery= view.findViewById(R.id.gallery)
         emptyView = view.findViewById(R.id.empty_view)
-        headerText = view.findViewById(R.id.textView)
-        selectAll = view.findViewById(R.id.selectAll)
+        headerText = view.findViewById(R.id.allImages)
+        imageCount = view.findViewById(R.id.imageCount)
 
         addFab = view.findViewById(R.id.addFab)
-        editFab = view.findViewById(R.id.editFab)
 
-        cancelFab = view.findViewById(R.id.cancelFab)
-        deleteFab = view.findViewById(R.id.deleteFab)
-
-        galleryAdapter = GalleryAdapter(gallery){image -> adapterOnClick(image)}
+        galleryAdapter = GalleryAdapter(
+            onClick = { image: MSImage -> adapterOnClick(image) },
+            onLongClick = {image: MSImage -> adapterOnLongClick(image)}
+        )
         gallery.let{ rv ->
             rv.adapter = galleryAdapter
+
+            //Define span count based on screen Width
             if(detailsFrag != null && resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT){
+                //Tablet Portrait
                 rv.layoutManager = GridLayoutManager(requireContext(), 6)
-            }else {
+            }else if(detailsFrag == null && resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                //Smartphone Landscape
+                rv.layoutManager = GridLayoutManager(requireContext(), 9)
+            } else {
+                //Smartphone Portrait or Tablet Landscape
                 rv.layoutManager = GridLayoutManager(requireContext(), 4)
             }
 
@@ -106,12 +101,11 @@ class GalleryFragment : Fragment() {
          * LiveData observer. If image list changes then update UI
          */
         imageListViewModel.allImages.observe(viewLifecycleOwner){
+            imageCount.text = it.size.toString()
             if(it.isNotEmpty()){
                 emptyView.visibility = View.GONE
-                editFab.isEnabled = true
             } else {
                 emptyView.visibility = View.VISIBLE
-                editFab.isEnabled = false
             }
             galleryAdapter.submitList(it)
         }
@@ -126,134 +120,46 @@ class GalleryFragment : Fragment() {
             }
         }
 
-        editFab.setOnClickListener{
-            editFab.visibility = View.GONE
-            addFab.visibility = View.GONE
-            cancelFab.visibility = View.VISIBLE
-            deleteFab.visibility = View.VISIBLE
-            headerText.visibility = View.INVISIBLE
-            selectAll.visibility = View.VISIBLE
-            editMode = true
-        }
-        cancelFab.setOnClickListener{
-            cancelBehaviour()
-        }
-
-        deleteFab.setOnClickListener{
-
-            if(pendingImages.isNotEmpty()){
-                val alertDialog: AlertDialog? = activity?.let {
-                    val builder = AlertDialog.Builder(it)
-                    builder.apply {
-                        setTitle("Delete images")
-                        setMessage("Remove selected images from gallery?")
-                        setPositiveButton(R.string.delAlert){ _, _ ->
-
-                            editFab.visibility = View.VISIBLE
-                            addFab.visibility = View.VISIBLE
-                            cancelFab.visibility = View.GONE
-                            deleteFab.visibility = View.GONE
-                            headerText.visibility = View.VISIBLE
-                            selectAll.visibility = View.INVISIBLE
-                            editMode = false
-                            Log.v("selectAll", "${pendingImages.size}")
-                            imageListViewModel.removeImageList(pendingImages)
-                            retrieveSelections()
-                            pendingImages.clear()
-                            selectAll.isChecked = false
-                        }
-                        setNegativeButton(R.string.cancAlert){ _, _ ->
-                            // User cancelled the dialog
-                            cancelBehaviour()
-                        }
-                    }
-                    builder.create()
-                }
-
-                alertDialog?.show()
-            }else{
-                Toast
-                    .makeText(requireContext(), "Select al least one image!", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        }
-
-        selectAll.setOnCheckedChangeListener{ _, checked ->
-            val allImages = imageListViewModel.allImages.value
-            if(checked){
-                imageListViewModel.selectStateAll(true)
-                gallery.children.forEach {
-                    it.isSelected = true
-                }
-                if(allImages != null){
-                    pendingImages.addAll(allImages)
-                }
-            }else{
-                imageListViewModel.selectStateAll(false)
-                gallery.children.forEach {
-                    it.isSelected = false
-                }
-                pendingImages.clear()
-            }
-
-        }
-
         return view
     }
 
-    /**
-     * Called if user press Cancel button (Gallery or Alert Dialog)
-     */
-    private fun cancelBehaviour(){
-        editFab.visibility = View.VISIBLE
-        addFab.visibility = View.VISIBLE
-        cancelFab.visibility = View.GONE
-        deleteFab.visibility = View.GONE
-        headerText.visibility = View.VISIBLE
-        selectAll.visibility = View.INVISIBLE
-        editMode = false
-        pendingImages.forEach { it.selected = false }
-        retrieveSelections()
-        pendingImages.clear()
-        imageListViewModel.selectStateAll(false)
-        selectAll.isChecked = false
-    }
 
     /**
-     *  Called every time user click RecyclerView Item
+     *  User click RecyclerView Item -> Image detail will be displayed
      */
     private fun adapterOnClick(image: MSImage){
-        if(!editMode){
-            if(detailsFrag == null){
-                //if target device is smartphone...
-                val intent = Intent(context, DisplayActivity::class.java)
-                intent.putExtra("id", image.id)
-                startActivity(intent)
-            } else {
-                    //else update UI...
-                (detailsFrag as DetailFragment).updateDisplayImage(image)
-            }
+        if(detailsFrag == null){
+            //if target device is smartphone...
+            val intent = Intent(context, DisplayActivity::class.java)
+            intent.putExtra("id", image.id)
+            startActivity(intent)
         } else {
-            if(!image.selected){
-                image.selected = true
-                pendingImages.add(image)
-            } else {
-                image.selected = false
-                pendingImages.remove(image)
-            }
+            //else update UI...
+            (detailsFrag as DetailFragment).updateDisplayImage(image)
         }
+
     }
 
     /**
-     * Retrieve background color and selected state of selected items after Cancel/Delete click
+     * User long click an image for delete it from gallery
      */
-    private fun retrieveSelections(){
-        val positions = galleryAdapter.selPositions
-        for(i in 0 until positions.size){
-            val index = positions[i]
-            gallery.getChildAt(index).isSelected = false
+    private fun adapterOnLongClick(image: MSImage){
+        val alertDialog: AlertDialog? = activity?.let {
+            val builder = AlertDialog.Builder(it)
+            builder.apply {
+                setTitle("Delete image")
+                setMessage("Remove ${image.displayName} from gallery?")
+                setPositiveButton(R.string.delAlert){ _, _ ->
+                    imageListViewModel.removeImage(image)
+                    if(detailsFrag != null)
+                        (detailsFrag as DetailFragment).removeDisplayImage()
+                }
+                setNegativeButton(R.string.cancAlert, null)
+            }
+            builder.create()
         }
-        positions.clear()
+
+        alertDialog?.show()
     }
 
     /**
@@ -308,6 +214,5 @@ class GalleryFragment : Fragment() {
             val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
             ActivityCompat.requestPermissions(requireActivity(), permissions, READ_EXTERNAL_STORAGE_REQUEST)
         }
-
     }
 }

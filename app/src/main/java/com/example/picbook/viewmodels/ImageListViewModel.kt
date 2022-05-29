@@ -6,18 +6,15 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.ContextWrapper
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.graphics.ImageDecoder.decodeBitmap
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
-import androidx.core.net.toUri
 import androidx.lifecycle.*
 import com.example.picbook.data.*
 import kotlinx.coroutines.launch
-import java.io.ByteArrayOutputStream
 import java.io.File
 
 
@@ -91,22 +88,11 @@ class ImageListViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     /**
-     * Remove all images selected in the gallery
+     * Remove selected image
      */
-    fun removeImageList(imageList: List<MSImage>){
-        imageList.forEach{
-            viewModelScope.launch {
-                dataRepository.removeImage(it)
-            }
-        }
-    }
-
-    /**
-     * Set all images in selected state
-     */
-    fun selectStateAll(newSelected: Boolean){
-        allImages.value?.forEach {
-            it.selected = newSelected
+    fun removeImage(image: MSImage){
+        viewModelScope.launch {
+            dataRepository.removeImage(image)
         }
     }
 

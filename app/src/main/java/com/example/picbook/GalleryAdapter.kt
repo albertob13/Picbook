@@ -13,37 +13,31 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.picbook.data.MSImage
 
 
-class GalleryAdapter(private val gallery: RecyclerView, private val onClick: (MSImage) -> Unit):
+class GalleryAdapter(private val onClick: (MSImage) -> Unit,
+                     private val onLongClick: (MSImage) -> Unit):
     ListAdapter<MSImage, GalleryAdapter.ImageViewHolder>(ImageDiffCallback) {
 
-    /**
-     * Array containing positions of selected items, used for retrieve basic style of all selected items
-     * after user press Cancel button
-     */
-    val selPositions = ArrayList<Int>()
-
-    inner class ImageViewHolder(itemView: View, onClick: (MSImage) -> Unit) :
+    inner class ImageViewHolder(itemView: View,
+                                onClick: (MSImage) -> Unit,
+                                onLongClick: (MSImage) -> Unit) :
         RecyclerView.ViewHolder(itemView) {
 
         private val imageView: ImageView = itemView.findViewById(R.id.image)
         private lateinit var currentImage: MSImage
 
         init {
-            itemView.setOnClickListener { view ->
-                val pos = gallery.getChildAdapterPosition(view)
+            itemView.setOnClickListener {
                 currentImage.let(onClick)
-                view.isSelected = currentImage.selected
-                if(view.isSelected){
-                    selPositions.add(pos)
-                }else {
-                    selPositions.remove(pos)
-                }
+            }
+
+            itemView.setOnLongClickListener{
+                currentImage.let(onLongClick)
+                true
             }
         }
 
         fun bind(image: MSImage){
             currentImage = image
-            itemView.isSelected = currentImage.selected
             imageView.setImageBitmap(BitmapFactory.decodeFile(currentImage.thumbPath))
         }
     }
@@ -51,20 +45,12 @@ class GalleryAdapter(private val gallery: RecyclerView, private val onClick: (MS
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.gallery_item, parent, false)
-        return ImageViewHolder(view, onClick)
+        return ImageViewHolder(view, onClick, onLongClick)
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-        val mediaStoreImage = getItem(position)
-        holder.bind(mediaStoreImage)
-
-    }
-
-    /**
-     * Method used for fix item style when scrolling
-     */
-    override fun getItemViewType(position: Int): Int {
-        return position
+        val image = getItem(position)
+        holder.bind(image)
     }
 }
 

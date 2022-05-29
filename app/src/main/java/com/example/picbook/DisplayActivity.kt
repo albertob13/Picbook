@@ -31,6 +31,4 @@ class DisplayActivity: AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
-
-
 }

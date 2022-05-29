@@ -8,16 +8,25 @@
     tools:context=".DetailFragment">
 
 
+    <TextView
+        android:id="@+id/selectToStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/selectImage"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:textColor="@color/light_gray"/>
+
     <com.example.picbook.ZoomImageView
         android:id="@+id/imageDetail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/imageName"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
         android:contentDescription="@string/detailImage"
-        android:src="@drawable/placeholder"
-        />
+        android:visibility="invisible" />
 
     <TextView
         android:id="@+id/imageName"
@@ -31,6 +40,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="@color/light_gray"
         android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:visibility="invisible" />
 
 </RelativeLayout>

@@ -1,7 +1,5 @@
 package com.example.picbook.data
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore

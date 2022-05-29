@@ -22,8 +22,8 @@
         <entry key="app/src/main/res/layout/activity_display.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_gallery.xml" value="0.14175724637681159" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/fragment_detail.xml" value="0.165" />
-        <entry key="app/src/main/res/layout/fragment_gallery.xml" value="0.16683654785156254" />
+        <entry key="app/src/main/res/layout/fragment_detail.xml" value="0.19850921630859375" />
+        <entry key="app/src/main/res/layout/fragment_gallery.xml" value="0.22232666015625002" />
         <entry key="app/src/main/res/layout/gallery_item.xml" value="0.1" />
         <entry key="app/src/main/res/layout/main_activity.xml" value="0.19166666666666668" />
         <entry key="app/src/main/res/layout/nav_host.xml" value="0.14175724637681159" />

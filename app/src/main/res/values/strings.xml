@@ -2,13 +2,9 @@
     <string name="app_name">Picbook</string>
 
     <string name="headerDesc">headerDesc</string>
-    <string name="headerText">All photos</string>
-    <string name="checkBoxSelectAll">Select all</string>
+    <string name="headerText">All images</string>
 
     <string name="addFab">addFab</string>
-    <string name="editFab">editFab</string>
-    <string name="cancelFab">cancelFab</string>
-    <string name="deleteFab">deleteFab</string>
 
     <string name="welcomeText">No image available</string>
     <string name="placeholder">PlaceholderText</string>

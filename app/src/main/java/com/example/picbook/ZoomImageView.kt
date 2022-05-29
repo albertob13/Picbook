@@ -7,8 +7,6 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.AppCompatImageView
-import kotlin.math.max
-import kotlin.math.min
 
 class ZoomImageView constructor(
     context: Context,
@@ -25,7 +23,7 @@ class ZoomImageView constructor(
     // required Scales
     var presentScale = 1f
     var minScale = 1f
-    var maxScale = 5f
+    var maxScale = 8f
 
     //Dimensions
     var originalWidth = 0f
