@@ -7,6 +7,8 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.math.MathUtils
+import kotlin.math.round
 
 class ZoomImageView constructor(
     context: Context,
@@ -83,11 +85,14 @@ class ZoomImageView constructor(
                     detector.focusX, detector.focusY
                 )
             }
-            Log.v("onScale", "$presentScale")
-            fittedTranslation()
+            //fittedTranslation()
             return true
         }
     }
+
+    /**
+     * Fit image onto the screen based on its coordinates and scale factor
+     */
     private fun putToScreen() {
         presentScale = 1f
         val factor: Float
@@ -119,10 +124,17 @@ class ZoomImageView constructor(
         val translationY =
             matrixValue!![Matrix.MTRANS_Y]
         val fittedTransX = getFittedTranslation(translationX, mViewedWidth.toFloat(), originalWidth * presentScale)
+        Log.v("fittedTranslation", "fittedTransX=$fittedTransX($presentScale)")
         val fittedTransY = getFittedTranslation(translationY, mViewedHeight.toFloat(), originalHeight * presentScale)
-        if (fittedTransX != 0f || fittedTransY != 0f) myMatrix!!.postTranslate(fittedTransX, fittedTransY)
+        Log.v("fittedTranslation", "fittedTransY=$fittedTransY($presentScale)")
+        if (fittedTransX != 0f || fittedTransY != 0f)
+            myMatrix!!.postTranslate(fittedTransX, fittedTransY)
+
     }
 
+    /**
+     * Handle image negative coordinates and the case when image is not zoomed
+     */
     private fun getFittedTranslation(mTranslate: Float,vSize: Float, cSize: Float): Float {
         val minTranslation: Float
         val maxTranslation: Float
