@@ -7,8 +7,6 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.math.MathUtils
-import kotlin.math.round
 
 class ZoomImageView constructor(
     context: Context,
@@ -25,7 +23,7 @@ class ZoomImageView constructor(
     // required Scales
     var presentScale = 1f
     var minScale = 1f
-    var maxScale = 8f
+    var maxScale = 15f
 
     //Dimensions
     var originalWidth = 0f
@@ -71,21 +69,9 @@ class ZoomImageView constructor(
                 presentScale = minScale
                 mScaleFactor = minScale / prevScale
             }
-            //if zoomed image is contained in parent size
-            if (originalWidth * presentScale <= mViewedWidth
-                || originalHeight * presentScale <= mViewedHeight
-            ) {
-                myMatrix!!.postScale(
-                    mScaleFactor, mScaleFactor, mViewedWidth / 2.toFloat(),
-                    mViewedHeight / 2.toFloat()
-                )
-            } else {
-                myMatrix!!.postScale(
-                    mScaleFactor, mScaleFactor,
-                    detector.focusX, detector.focusY
-                )
-            }
-            //fittedTranslation()
+
+            myMatrix!!.postScale(mScaleFactor, mScaleFactor, detector.focusX, detector.focusY)
+            fittedTranslation()
             return true
         }
     }
@@ -124,9 +110,7 @@ class ZoomImageView constructor(
         val translationY =
             matrixValue!![Matrix.MTRANS_Y]
         val fittedTransX = getFittedTranslation(translationX, mViewedWidth.toFloat(), originalWidth * presentScale)
-        Log.v("fittedTranslation", "fittedTransX=$fittedTransX($presentScale)")
         val fittedTransY = getFittedTranslation(translationY, mViewedHeight.toFloat(), originalHeight * presentScale)
-        Log.v("fittedTranslation", "fittedTransY=$fittedTransY($presentScale)")
         if (fittedTransX != 0f || fittedTransY != 0f)
             myMatrix!!.postTranslate(fittedTransX, fittedTransY)
 
@@ -135,23 +119,18 @@ class ZoomImageView constructor(
     /**
      * Handle image negative coordinates and the case when image is not zoomed
      */
-    private fun getFittedTranslation(mTranslate: Float,vSize: Float, cSize: Float): Float {
-        val minTranslation: Float
-        val maxTranslation: Float
-        if (cSize <= vSize) {
-            minTranslation = 0f
-            maxTranslation = vSize - cSize
+    private fun getFittedTranslation(trans: Float, viewSize: Float, contentSize: Float): Float {
+        val minTrans: Float
+        val maxTrans: Float
+        if (contentSize <= viewSize) {
+            minTrans = 0f
+            maxTrans = viewSize - contentSize
         } else {
-            minTranslation = vSize - cSize
-            maxTranslation = 0f
+            minTrans = viewSize - contentSize
+            maxTrans = 0f
         }
-        if (mTranslate < minTranslation) {
-            return -mTranslate + minTranslation
-        }
-        if (mTranslate > maxTranslation) {
-            return -mTranslate + maxTranslation
-        }
-        return 0F
+        if (trans < minTrans) return -trans + minTrans
+        return if(trans > maxTrans) -trans + maxTrans else 0f
     }
     private fun getFixDragTrans(delta: Float, viewedSize: Float, detailSize: Float): Float {
         return if (detailSize <= viewedSize) {
