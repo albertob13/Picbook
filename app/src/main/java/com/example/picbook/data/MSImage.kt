@@ -2,7 +2,6 @@ package com.example.picbook.data
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.PrimaryKey
 
 /**
@@ -16,6 +15,5 @@ data class MSImage(
     @ColumnInfo(name = "thumb-path") val thumbPath: String
     ){
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") var id: Int = 0
-    @Ignore var selected: Boolean = false
 }
 

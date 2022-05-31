@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Matrix
 import android.graphics.PointF
 import android.util.AttributeSet
-import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.AppCompatImageView
 
@@ -26,10 +25,10 @@ class ZoomImageView constructor(
     var maxScale = 15f
 
     //Dimensions
-    var originalWidth = 0f
-    var originalHeight = 0f
-    var mViewedWidth = 0
-    var mViewedHeight = 0
+    private var originalWidth = 0f
+    private var originalHeight = 0f
+    private var mViewedWidth = 0
+    private var mViewedHeight = 0
     private var lastPoint = PointF()
     private var startPoint = PointF()
 
