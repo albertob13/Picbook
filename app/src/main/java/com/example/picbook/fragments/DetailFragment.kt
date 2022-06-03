@@ -1,4 +1,4 @@
-package com.example.picbook
+package com.example.picbook.fragments
 
 import android.app.AlertDialog
 import android.graphics.BitmapFactory
@@ -7,6 +7,10 @@ import android.view.*
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.example.picbook.DisplayActivity
+import com.example.picbook.MainActivity
+import com.example.picbook.R
+import com.example.picbook.ZoomImageView
 import com.example.picbook.data.MSImage
 import com.example.picbook.viewmodels.ImageDetailViewModel
 import com.example.picbook.viewmodels.ImageDetailViewModelFactory
@@ -31,7 +35,7 @@ class DetailFragment : Fragment() {
         imageView = view.findViewById(R.id.imageDetail)
         imageName = view.findViewById(R.id.imageName)
         placeholderText = view.findViewById(R.id.selectToStart)
-
+        
         val imageId = requireActivity().intent.getIntExtra("id", -1)
         //if target device is smartphone, imageId=-1 always
         if(imageId != -1){
@@ -83,8 +87,9 @@ class DetailFragment : Fragment() {
     fun updateDisplayImage(image: MSImage){
             imageDetailViewModel.imageToDisplay(image.id)
     }
-    fun removeDisplayImage(){
-        imageDetailViewModel.imageToDisplay(-1)
+    fun removeDisplayImage(id: Int){
+        if(id == imageDisplayed.id)
+            imageDetailViewModel.imageToDisplay(-1)
     }
 }
 

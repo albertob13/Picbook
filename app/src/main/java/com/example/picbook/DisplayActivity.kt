@@ -5,6 +5,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.example.picbook.fragments.DetailFragment
 
 class DisplayActivity: AppCompatActivity() {
 

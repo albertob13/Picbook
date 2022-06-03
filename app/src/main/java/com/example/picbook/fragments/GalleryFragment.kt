@@ -1,4 +1,4 @@
-package com.example.picbook
+package com.example.picbook.fragments
 
 import android.Manifest
 import android.app.Activity
@@ -22,6 +22,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.picbook.DisplayActivity
+import com.example.picbook.GalleryAdapter
+import com.example.picbook.GridItemDecorator
+import com.example.picbook.R
 import com.example.picbook.data.MSImage
 import com.example.picbook.viewmodels.ImageListViewModel
 import com.example.picbook.viewmodels.ImageListViewModelFactory
@@ -150,7 +154,7 @@ class GalleryFragment : Fragment() {
                 setPositiveButton(R.string.delAlert){ _, _ ->
                     imageListViewModel.removeImage(image)
                     if(detailsFrag != null)
-                        (detailsFrag as DetailFragment).removeDisplayImage()
+                        (detailsFrag as DetailFragment).removeDisplayImage(image.id)
                 }
                 setNegativeButton(R.string.cancAlert, null)
             }

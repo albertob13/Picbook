@@ -10,7 +10,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/gallery_frag_large"
-        android:name="com.example.picbook.GalleryFragment"
+        android:name="com.example.picbook.fragments.GalleryFragment"
         tools:layout="@layout/fragment_gallery"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -20,7 +20,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/details_frag_large"
-        android:name="com.example.picbook.DetailFragment"
+        android:name="com.example.picbook.fragments.DetailFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="0.5"

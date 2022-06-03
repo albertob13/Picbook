@@ -5,7 +5,7 @@
     android:id="@+id/detailFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:name="com.example.picbook.DetailFragment"
+    android:name="com.example.picbook.fragments.DetailFragment"
     tools:layout="@layout/fragment_detail">
 
 </androidx.fragment.app.FragmentContainerView>
