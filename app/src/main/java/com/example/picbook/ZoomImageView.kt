@@ -3,9 +3,13 @@ package com.example.picbook
 import android.content.Context
 import android.graphics.Matrix
 import android.graphics.PointF
+import android.os.Bundle
+import android.os.Parcelable
 import android.util.AttributeSet
+import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.AppCompatImageView
+import kotlin.math.min
 
 class ZoomImageView constructor(
     context: Context,
@@ -73,35 +77,12 @@ class ZoomImageView constructor(
             fittedTranslation()
             return true
         }
+
+        override fun onScaleEnd(detector: ScaleGestureDetector?) {
+            super.onScaleEnd(detector)
+        }
     }
 
-    /**
-     * Fit image onto the screen based on its coordinates and scale factor
-     */
-    private fun putToScreen() {
-        presentScale = 1f
-        val factor: Float
-        val mDrawable = drawable
-        if (mDrawable == null || mDrawable.intrinsicWidth == 0 || mDrawable.intrinsicHeight == 0) return
-        val mImageWidth = mDrawable.intrinsicWidth
-        val mImageHeight = mDrawable.intrinsicHeight
-        val factorX = mViewedWidth.toFloat() / mImageWidth.toFloat()
-        val factorY = mViewedHeight.toFloat() / mImageHeight.toFloat()
-        factor = factorX.coerceAtMost(factorY)
-        myMatrix!!.setScale(factor, factor)
-
-        // Centering the image
-        var repeatedYSpace = (mViewedHeight.toFloat()
-                - factor * mImageHeight.toFloat())
-        var repeatedXSpace = (mViewedWidth.toFloat()
-                - factor * mImageWidth.toFloat())
-        repeatedYSpace /= 2.toFloat()
-        repeatedXSpace /= 2.toFloat()
-        myMatrix!!.postTranslate(repeatedXSpace, repeatedYSpace)
-        originalWidth = mViewedWidth - 2 * repeatedXSpace
-        originalHeight = mViewedHeight - 2 * repeatedYSpace
-        imageMatrix = myMatrix
-    }
     fun fittedTranslation() {
         myMatrix!!.getValues(matrixValue)
         val translationX =
@@ -141,10 +122,38 @@ class ZoomImageView constructor(
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         mViewedWidth = MeasureSpec.getSize(widthMeasureSpec)
         mViewedHeight = MeasureSpec.getSize(heightMeasureSpec)
-        if (presentScale == 1f) {
+        if(presentScale == 1f){
+            val factor: Float
+            val mDrawable = drawable
+            if (mDrawable == null || mDrawable.intrinsicWidth == 0 || mDrawable.intrinsicHeight == 0) return
+            val mImageWidth = mDrawable.intrinsicWidth
+            val mImageHeight = mDrawable.intrinsicHeight
+            val factorX = mViewedWidth.toFloat() / mImageWidth.toFloat()
+            val factorY = mViewedHeight.toFloat() / mImageHeight.toFloat()
+            factor = factorX.coerceAtMost(factorY)
+            myMatrix!!.setScale(factor, factor)
 
-            // Merged onto the Screen
-            putToScreen()
+            // Centering the image
+            var repeatedYSpace = (mViewedHeight.toFloat()
+                    - factor * mImageHeight.toFloat())
+            var repeatedXSpace = (mViewedWidth.toFloat()
+                    - factor * mImageWidth.toFloat())
+            repeatedYSpace /= 2.toFloat()
+            repeatedXSpace /= 2.toFloat()
+            myMatrix!!.postTranslate(repeatedXSpace, repeatedYSpace)
+            originalWidth = mViewedWidth - 2 * repeatedXSpace
+            originalHeight = mViewedHeight - 2 * repeatedYSpace
+            imageMatrix = myMatrix
+        }
+
+    }
+
+    private fun setViewSize(mode: Int, size: Int, drawableWidth: Int): Int{
+        return when(mode){
+            MeasureSpec.EXACTLY -> size
+            MeasureSpec.AT_MOST -> min(drawableWidth, size)
+            MeasureSpec.UNSPECIFIED -> drawableWidth
+            else -> size
         }
     }
 

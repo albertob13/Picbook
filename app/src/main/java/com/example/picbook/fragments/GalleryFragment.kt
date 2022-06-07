@@ -149,14 +149,14 @@ class GalleryFragment : Fragment() {
         val alertDialog: AlertDialog? = activity?.let {
             val builder = AlertDialog.Builder(it)
             builder.apply {
-                setTitle("Delete image")
+                setTitle(R.string.titleAlert)
                 setMessage("Remove ${image.displayName} from gallery?")
                 setPositiveButton(R.string.delAlert){ _, _ ->
                     imageListViewModel.removeImage(image)
                     if(detailsFrag != null)
                         (detailsFrag as DetailFragment).removeDisplayImage(image.id)
                 }
-                setNegativeButton(R.string.cancAlert, null)
+                setNegativeButton(R.string.cancelAlert, null)
             }
             builder.create()
         }

@@ -35,7 +35,7 @@ class DetailFragment : Fragment() {
         imageView = view.findViewById(R.id.imageDetail)
         imageName = view.findViewById(R.id.imageName)
         placeholderText = view.findViewById(R.id.selectToStart)
-        
+
         val imageId = requireActivity().intent.getIntExtra("id", -1)
         //if target device is smartphone, imageId=-1 always
         if(imageId != -1){
@@ -64,7 +64,7 @@ class DetailFragment : Fragment() {
         val alertDialog: AlertDialog? = activity?.let {
             val builder = AlertDialog.Builder(it)
             builder.apply {
-                setTitle("Delete image")
+                setTitle(R.string.titleAlert)
                 setMessage("Remove ${imageDisplayed.displayName} from gallery?")
                 setPositiveButton(R.string.delAlert) { _, _ ->
                     imageDetailViewModel.removeImage(imageDisplayed)
@@ -76,7 +76,7 @@ class DetailFragment : Fragment() {
                         requireActivity().finish()
                     }
                 }
-                setNegativeButton("Cancel", null)
+                setNegativeButton(R.string.cancelAlert, null)
             }
             builder.create()
         }

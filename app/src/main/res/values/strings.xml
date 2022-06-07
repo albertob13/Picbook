@@ -6,7 +6,6 @@
 
     <string name="addFab">addFab</string>
 
-    <string name="welcomeText">No image available</string>
     <string name="placeholder">PlaceholderText</string>
 
     <string name="selectImage">Select image to start</string>
@@ -16,7 +15,8 @@
     <string name="detailImage"> Detail image</string>
 
     <string name="delAlert"> Delete</string>
-    <string name="cancAlert">Cancel</string>
+    <string name="cancelAlert">Cancel</string>
+    <string name="titleAlert">Delete Image</string>
 
     <string name="menuDelete">Delete</string>
 </resources>
