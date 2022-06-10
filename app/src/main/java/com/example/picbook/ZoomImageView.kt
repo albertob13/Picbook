@@ -4,10 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.graphics.PointF
-import android.os.Bundle
-import android.os.Parcelable
 import android.util.AttributeSet
-import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.AppCompatImageView
 
@@ -41,8 +38,6 @@ class ZoomImageView constructor(
     private var mViewedHeight = 0
     private var lastPoint = PointF()
     private var startPoint = PointF()
-
-    private var bundle: Bundle? = null
 
     init{
         super.setClickable(true)
