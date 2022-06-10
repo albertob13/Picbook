@@ -9,6 +9,7 @@
     <string name="placeholder">PlaceholderText</string>
 
     <string name="selectImage">Select image to start</string>
+    <string name="noImageAvailable">No image available</string>
 
     <string name="detailDeleteBut">Delete image</string>
     <string name="imageName"> Image name</string>

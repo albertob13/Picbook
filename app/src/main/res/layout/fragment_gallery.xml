@@ -72,11 +72,16 @@
         app:layout_constraintTop_toTopOf="@+id/top_guideline"
         tools:visibility="visible">
 
-        <ImageView
+        <TextView
+            android:id="@+id/noImageAvailable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/placeholder"
-            android:src="@drawable/imageadd" />
+            android:gravity="center"
+            android:text="@string/noImageAvailable"
+            android:textSize="25sp"
+            android:textColor="@color/soft_gray"
+            app:drawableTopCompat="@drawable/imageadd"
+            android:drawablePadding="10dp"/>
 
     </LinearLayout>
 

@@ -49,7 +49,6 @@ class DetailFragment : Fragment() {
                 imageView.visibility = View.VISIBLE
                 placeholderText.visibility = View.INVISIBLE
                 imageName.text = it.displayName
-                imageView.resetPresentScale()   //set presentScale default value
                 imageView.setImageBitmap(BitmapFactory.decodeFile(it.path))
             }else{
                 imageName.visibility = View.INVISIBLE

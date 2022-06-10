@@ -1,6 +1,7 @@
 package com.example.picbook
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.graphics.PointF
 import android.os.Bundle
@@ -9,7 +10,6 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.AppCompatImageView
-import kotlin.math.min
 
 class ZoomImageView constructor(
     context: Context,
@@ -21,9 +21,15 @@ class ZoomImageView constructor(
     private var myGestureDetector: GestureDetector? = null
     var myMatrix: Matrix? = null
     private var matrixValue: FloatArray? = null
+
+    /**
+     *  zoomMode:
+     *  0 -> image not zoomed and not translated,
+     *  1 -> image translated,
+     *  2 -> image zoomed and not translated
+     */
     var zoomMode = 0
 
-    // required Scales
     var presentScale = 1f
     var minScale = 1f
     var maxScale = 15f
@@ -36,25 +42,28 @@ class ZoomImageView constructor(
     private var lastPoint = PointF()
     private var startPoint = PointF()
 
+    private var bundle: Bundle? = null
+
     init{
         super.setClickable(true)
         myContext=context
         myScaleDetector= ScaleGestureDetector(context,ScalingListener())
+        myGestureDetector = GestureDetector(context, this)
         myMatrix=Matrix()
         matrixValue=FloatArray(10)
         imageMatrix = myMatrix
         scaleType = ScaleType.MATRIX
-        myGestureDetector = GestureDetector(context, this)
         setOnTouchListener(this)
     }
 
     /**
-     * If user zoom an image, next will maintain the previous scale.
-     * Every time an image is loaded, presentScale is set to default value.
+     * Reset zoom scale to original value and set the bitmap
      */
-    fun resetPresentScale(){
+    override fun setImageBitmap(bm: Bitmap?) {
         presentScale = 1f
+        super.setImageBitmap(bm)
     }
+    
     private inner class ScalingListener : ScaleGestureDetector.SimpleOnScaleGestureListener(){
         override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean {
             zoomMode = 2
@@ -77,35 +86,30 @@ class ZoomImageView constructor(
             fittedTranslation()
             return true
         }
-
-        override fun onScaleEnd(detector: ScaleGestureDetector?) {
-            super.onScaleEnd(detector)
-        }
     }
 
+    /**
+     * Center image within the view while zooming in and out
+     */
     fun fittedTranslation() {
         myMatrix!!.getValues(matrixValue)
-        val translationX =
-            matrixValue!![Matrix.MTRANS_X]
-        val translationY =
-            matrixValue!![Matrix.MTRANS_Y]
+
+        val translationX = matrixValue!![Matrix.MTRANS_X]
+        val translationY = matrixValue!![Matrix.MTRANS_Y]
+
         val fittedTransX = getFittedTranslation(translationX, mViewedWidth.toFloat(), originalWidth * presentScale)
         val fittedTransY = getFittedTranslation(translationY, mViewedHeight.toFloat(), originalHeight * presentScale)
         if (fittedTransX != 0f || fittedTransY != 0f)
             myMatrix!!.postTranslate(fittedTransX, fittedTransY)
-
     }
 
-    /**
-     * Handle image negative coordinates and the case when image is not zoomed
-     */
     private fun getFittedTranslation(trans: Float, viewSize: Float, contentSize: Float): Float {
         val minTrans: Float
         val maxTrans: Float
-        if (contentSize <= viewSize) {
+        if (contentSize <= viewSize) { //Image is not zoomed
             minTrans = 0f
             maxTrans = viewSize - contentSize
-        } else {
+        } else {    //Image is zoomed
             minTrans = viewSize - contentSize
             maxTrans = 0f
         }
@@ -118,6 +122,9 @@ class ZoomImageView constructor(
         } else delta
     }
 
+    /**
+     * Image is fitted into the parent layout when is not zoomed
+     */
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         mViewedWidth = MeasureSpec.getSize(widthMeasureSpec)
@@ -126,43 +133,34 @@ class ZoomImageView constructor(
             val factor: Float
             val mDrawable = drawable
             if (mDrawable == null || mDrawable.intrinsicWidth == 0 || mDrawable.intrinsicHeight == 0) return
-            val mImageWidth = mDrawable.intrinsicWidth
-            val mImageHeight = mDrawable.intrinsicHeight
-            val factorX = mViewedWidth.toFloat() / mImageWidth.toFloat()
-            val factorY = mViewedHeight.toFloat() / mImageHeight.toFloat()
+            val drawableWidth = mDrawable.intrinsicWidth
+            val drawableHeight = mDrawable.intrinsicHeight
+            val factorX = mViewedWidth.toFloat() / drawableWidth.toFloat()
+            val factorY = mViewedHeight.toFloat() / drawableHeight.toFloat()
             factor = factorX.coerceAtMost(factorY)
             myMatrix!!.setScale(factor, factor)
 
-            // Centering the image
-            var repeatedYSpace = (mViewedHeight.toFloat()
-                    - factor * mImageHeight.toFloat())
-            var repeatedXSpace = (mViewedWidth.toFloat()
-                    - factor * mImageWidth.toFloat())
-            repeatedYSpace /= 2.toFloat()
-            repeatedXSpace /= 2.toFloat()
+            //Center image to his view
+            var repeatedYSpace = (mViewedHeight.toFloat() - factor * drawableHeight.toFloat())
+            var repeatedXSpace = (mViewedWidth.toFloat() - factor * drawableWidth.toFloat())
+            repeatedYSpace /= 2f
+            repeatedXSpace /= 2f
             myMatrix!!.postTranslate(repeatedXSpace, repeatedYSpace)
             originalWidth = mViewedWidth - 2 * repeatedXSpace
             originalHeight = mViewedHeight - 2 * repeatedYSpace
             imageMatrix = myMatrix
-        }
-
-    }
-
-    private fun setViewSize(mode: Int, size: Int, drawableWidth: Int): Int{
-        return when(mode){
-            MeasureSpec.EXACTLY -> size
-            MeasureSpec.AT_MOST -> min(drawableWidth, size)
-            MeasureSpec.UNSPECIFIED -> drawableWidth
-            else -> size
         }
     }
 
     override fun onTouch(mView: View, event: MotionEvent): Boolean {
         myScaleDetector!!.onTouchEvent(event)
         myGestureDetector!!.onTouchEvent(event)
+
+        //Display point where user touch
         val currentPoint = PointF(event.x, event.y)
 
         val mLayoutParams = this.layoutParams
+        //Get parent dimensions, in this case the ImageView container layout
         mLayoutParams.width = (this.parent as View).width
         mLayoutParams.height = (this.parent as View).height
         this.layoutParams = mLayoutParams
@@ -184,6 +182,7 @@ class ZoomImageView constructor(
             }
             MotionEvent.ACTION_POINTER_UP -> zoomMode = 0
         }
+        //set ImageView matrix with updated values
         imageMatrix = myMatrix
         return false
     }
