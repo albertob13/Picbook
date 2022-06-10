@@ -63,7 +63,7 @@ class ZoomImageView constructor(
         presentScale = 1f
         super.setImageBitmap(bm)
     }
-    
+
     private inner class ScalingListener : ScaleGestureDetector.SimpleOnScaleGestureListener(){
         override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean {
             zoomMode = 2
